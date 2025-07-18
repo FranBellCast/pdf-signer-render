@@ -3,25 +3,31 @@ import base64
 from PyPDF2 import PdfReader, PdfWriter
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
+from reportlab.lib.utils import ImageReader
 from io import BytesIO
+import os
 
 app = Flask(__name__)
 
 def add_signature_to_pdf(pdf_data, signature_data):
     pdf_reader = PdfReader(BytesIO(pdf_data))
     pdf_writer = PdfWriter()
-    signature_image = BytesIO(base64.b64decode(signature_data))
+
+    # Decode and prepare the signature image
+    signature_bytes = base64.b64decode(signature_data)
+    signature_image = ImageReader(BytesIO(signature_bytes))
 
     for page_num in range(len(pdf_reader.pages)):
         page = pdf_reader.pages[page_num]
 
+        # Create a new overlay PDF with the signature
         packet = BytesIO()
         can = canvas.Canvas(packet, pagesize=letter)
 
+        # Position of the signature (bottom-right corner)
         width = 150
         height = 50
         page_width = float(page.mediabox.width)
-        page_height = float(page.mediabox.height)
         x = page_width - width - 40
         y = 40
 
@@ -60,9 +66,8 @@ def sign_pdf():
 
 @app.route("/", methods=["GET"])
 def health():
-    return "PDF Signer is running!", 200
+    return "🟢 PDF Signer API is running!", 200
 
 if __name__ == "__main__":
-    import os
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
