@@ -76,5 +76,9 @@ def sign_pdf():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
+# (your Flask app code remains unchanged above)
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
