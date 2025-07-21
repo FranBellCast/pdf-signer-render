@@ -25,8 +25,8 @@ def add_signature_to_pdf(pdf_data, signature_data):
         can = canvas.Canvas(packet, pagesize=letter)
 
         # Position of the signature (bottom-right corner)
-        width = 150
-        height = 50
+        width = 120
+        height = 80
         page_width = float(page.mediabox.width)
         x = page_width - width - 40
         y = 40
